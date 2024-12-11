@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake API</title>
+    <!-- fastbootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css" rel="stylesheet" integrity="sha256-V6lu+OdYNKTKTsVFBuQsyIlDiRWiOmtC8VQ8Lzdm2i4=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+
+
+
+<body class="container py-5">
+    <nav>
+        <div class="d-flex align-items-center flex-column flex-lg-row">
+            <form class="me-2 mb-2 mb-lg-0">
+                <input type="text" id="searchBar" class="form-control form-control-sm" placeholder="Search..." />
+            </form>
+            <a class="btn btn-primary" href="">Search</a>
+        </div>
+    </nav>
+    <h3 class="text-center my-4">FAKE API : AJAX</h3>
+    <div class="d-flex justify-content-center my-4">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
+            Add Product
+          </button>
+    </div>
+    <div class="d-flex justify-content-center flex-wrap" id="card-wrap">
+            <p>Sedang memuat data...</p>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="productDeleteModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" id="delete-product">
+                <input type="hidden" id="id-product">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure delete <b id="title-text"></b> product?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-subtle" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+            <div class="modal fade" tabindex="-1" id="productModal" aria-labelledby="productModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <form id="productForm"> <!-- Tambahkan form -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productModalLabel">Add New Product</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-3">
+                                    <label for="title" class="col-sm-2 col-form-label">Title</label>
+                                    <div class="col-sm-10">
+                                        <input required type="text" class="form-control" id="title">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="price" class="col-sm-2 col-form-label">Price</label>
+                                    <div class="col-sm-10">
+                                        <input required type="number" class="form-control" id="price">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="description" class="col-sm-2 col-form-label">Description</label>
+                                    <div class="col-sm-10">
+                                        <textarea required class="form-control" id="description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="image" class="col-sm-2 col-form-label">Image Link</label>
+                                    <div class="col-sm-10">
+                                        <input required type="text" class="form-control" id="image">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="category" class="col-sm-2 col-form-label">Category</label>
+                                    <div class="col-sm-10">
+                                        <input required type="text" class="form-control" id="category">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-subtle" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+
+
+    <script>
+        const BASE_URL = "https://fakestoreapi.com";
+
+// Event submit pada form
+$("#productForm").on("submit", function (e) {
+    e.preventDefault();
+
+    // Ambil nilai dari input form
+    const title = $("#title").val();
+    const price = $("#price").val();
+    const description = $("#description").val();
+    const image = $("#image").val();
+    const category = $("#category").val();
+
+    // Data yang akan dikirim
+    const data = {
+        title: title,
+        price: price,
+        description: description,
+        image: image,
+        category: category,
+    };
+
+    // Kirim data ke API menggunakan AJAX
+    $.ajax({
+        type: "POST",
+        url: `${BASE_URL}/products`,
+        data: data, // Konversi data ke JSON string
+        dataType: "json", // Tambahkan ini untuk format JSON
+        success: function (response) {
+            console.log("Product added successfully:", response);
+            $("#productModal").modal("hide");
+
+            // Tampilkan notifikasi sukses
+            const alert = `
+                <div class="alert alert-primary" role="alert">
+                    <div class="d-flex gap-4">
+                        <span><i class="fa-solid fa-circle-info icon-primary"></i></span>
+                        <div class="d-flex flex-column gap-2">
+                            <h6 class="mb-0">Success add product!</h6>
+                            <p class="mb-0">Waiting for reload data...</p>
+                        </div>
+                    </div>
+                </div>`;
+            $("body").prepend(alert);
+
+            // Muat ulang data
+            setTimeout(function () {
+                location.reload();
+            }, 3000);
+        },
+        error: function (error) {
+            console.error("Error adding product:", error);
+            alert("Failed to add product, try again later!");
+        },
+    });
+});
+
+// Ketika halaman selesai dimuat, ambil data produk
+$(document).ready(function () {
+    $.ajax({
+        type: "GET",
+        url: `${BASE_URL}/products?limit=12`,
+        dataType: "json",
+        success: function (response) {
+            console.log(response);
+            let content = '';
+            response.forEach(item => {
+                content += `
+                <div class="card w-25 m-2">
+                    <div class="card-header d-flex align-items-center">
+                        <span class="avatar text-bg-primary avatar-lg fs-5">${item.title.charAt(0)}</span>
+                        <div class="ms-3">
+                            <h6 class="mb-0 fs-sm">${item.title}</h6>
+                            <span class="text-muted fs-sm">${item.category} | $${item.price}</span>
+                        </div>
+                        <div class="dropstart ms-auto">
+                            <button class="btn text-muted" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <span style="cursor: pointer" class="text-danger dropdown-item" onclick="showDeleteModal('${item.id}', '${item.title}')">
+                                        Delete
+                                    </span>
+                                </li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                            </ul>
+                        </div>
+                        </div>
+                        <img src="${item.image}" class="card-img-top w-50 d-block m-auto" alt="${item.title}" />
+                        <div class="card-body">
+                            <p class="card-text">${item.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            $("#card-wrap").html(content);
+        },
+        error: function (error) {
+            console.error("Error fetching products:", error);
+            $("#card-wrap").html("<p>Failed to load data!</p>");
+        },
+    });
+});
+
+function showDeleteModal(id, title) {
+    $("#title-text").text(title);
+    $("#id-product").val(id);
+    $("#productDeleteModal").modal("show");
+};
+
+$("#delete-product").submit(function (e) {
+    e.preventDefault();
+    let id = $("#id-product").val();
+    $.ajax({
+        type: "DELETE",
+        url: BASE_URL + "/products/" + id,
+        success: function (response) {
+            setTimeout(function () {
+                location.reload();
+            }, 3000);
+            $("#productDeleteModal").modal("hide");
+            let alert = `
+                <div class="alert alert-warning" role="alert">
+                    <div class="d-flex gap-4">
+                        <span><i class="fa-solid fa-circle-info icon-primary"></i></span>
+                        <div class="d-flex flex-column gap-2">
+                            <h6 class="mb-0">Success delete product!</h6>
+                            <p class="mb-0">Waiting for reload data...</p>
+                        </div>
+                    </div>
+                </div>`;
+            $("body").prepend(alert);
+        },
+        error: function (error) {
+            console.log(error);
+            alert("Failed delete product, try again later!");
+        }
+    });
+});
+
+
+// Event listener untuk search bar
+$("#searchBar").on("input", function () {
+    const query = $(this).val().toLowerCase(); // Ambil query dari search bar
+    $(".card").each(function () {
+        const title = $(this).find(".card-header h6").text().toLowerCase(); // Ambil judul produk
+        const description = $(this).find(".card-body p").text().toLowerCase(); // Ambil deskripsi produk
+        const category = $(this).find(".text-muted").text().toLowerCase(); // Ambil kategori produk
+
+        if (title.includes(query) || description.includes(query) || category.includes(query)) {
+            $(this).show(); // Tampilkan card
+        } else {
+            $(this).hide(); // Sembunyikan card
+        }
+    });
+});
+
+
+
+
+        </script>
+        
+</body>
+
+</html>
